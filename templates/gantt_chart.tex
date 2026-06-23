@@ -1,0 +1,59 @@
+% 간트차트 (연차별 연구추진 일정) — NRF 연구계획서 추진전략 섹션 필수 그림
+% 컴파일: bash scripts/compile_tikz.sh templates/gantt_chart.tex
+% 행=세부과제, 열=연차(분기), 막대=기간, 마름모=마일스톤.
+\documentclass[border=8pt]{standalone}
+\usepackage{kotex}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,shapes.geometric}
+
+\definecolor{barA}{HTML}{90CAF9}
+\definecolor{barB}{HTML}{A5D6A7}
+\definecolor{barC}{HTML}{FFCC80}
+\definecolor{grid}{HTML}{B0BEC5}
+\definecolor{ink}{HTML}{37474F}
+
+\begin{document}
+\begin{tikzpicture}[
+   x=1.15cm, y=-0.95cm,                         % y 음수: 위→아래
+   font=\sffamily\small,
+   bar/.style={rounded corners=2pt, draw=ink, line width=0.5pt},
+   ms/.style={fill=ink, draw=ink},              % 마일스톤 마름모
+   rowlabel/.style={anchor=east, font=\sffamily\small},
+   collabel/.style={anchor=south, font=\sffamily\footnotesize, color=ink},
+]
+  % ===== 좌표 규약: x=분기(1..12 = 3년 ×4분기), y=행 =====
+  \def\Nq{12}      % 총 분기 수 (3년)
+  \def\Nr{4}       % 세부과제 행 수
+
+  % --- 격자 + 연차/분기 헤더 ---
+  \foreach \q in {0,...,\Nq} \draw[grid, line width=0.4pt] (\q,0) -- (\q,\Nr);
+  \foreach \r in {0,...,\Nr} \draw[grid, line width=0.4pt] (0,\r) -- (\Nq,\r);
+  \foreach \y/\name in {1/{1차년},2/{2차년},3/{3차년}}{
+     \node[collabel, font=\sffamily\small\bfseries] at ({(\y-1)*4+2}, -0.7) {\name};
+     \draw[ink, line width=0.8pt] ({(\y-1)*4},0) -- ({(\y-1)*4},\Nr);
+  }
+  \draw[ink, line width=0.8pt] (\Nq,0) -- (\Nq,\Nr);
+  \foreach \q in {1,...,\Nq}{
+     \pgfmathtruncatemacro{\qq}{mod(\q-1,4)+1}
+     \node[font=\sffamily\scriptsize, color=ink, anchor=south] at (\q-0.5,-0.02) {Q\qq};
+  }
+
+  % --- 행 라벨 (세부과제) ---
+  \node[rowlabel] at (0,0.5) {세부과제 1: [기반/예비]};
+  \node[rowlabel] at (0,1.5) {세부과제 2: [핵심 기법]};
+  \node[rowlabel] at (0,2.5) {세부과제 3: [검증/확증]};
+  \node[rowlabel] at (0,3.5) {세부과제 4: [활용/확산]};
+
+  % --- 막대 (start, end, row, color) : \q 는 1부터 ---
+  \fill[barA] (0.1,0.2) rectangle (4,0.8);     % 과제1: 1차년
+  \fill[barB] (3,1.2)  rectangle (9,1.8);      % 과제2: 1차년 말~2차년
+  \fill[barC] (6,2.2)  rectangle (11,2.8);     % 과제3: 2~3차년
+  \fill[barA] (9,3.2)  rectangle (12,3.8);     % 과제4: 3차년
+
+  % --- 마일스톤 (마름모) + 라벨 ---
+  \foreach \x/\y/\m in {4/0.5/{M1: 예비결과}, 9/1.5/{M2: 프로토타입}, 12/2.5/{M3: 검증완료}}{
+     \node[ms, diamond, inner sep=2.2pt] at (\x,\y) {};
+     \node[font=\sffamily\scriptsize, color=ink, anchor=west] at (\x+0.15,\y) {\m};
+  }
+\end{tikzpicture}
+\end{document}

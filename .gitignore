@@ -1,0 +1,33 @@
+# LaTeX build artifacts (figures are compiled on demand)
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+# compiled figures live next to their .tex during a session; keep curated ones in assets/
+templates/*.pdf
+templates/*.png
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# local demo artifacts (incl. user files) — not for GitHub
+_demo/
+
+# local agent settings (not for the public repo)
+.claude/settings.local.json
+
+# internal dev notes — kept locally, not for the public repo
+progress.md
+
+# stray scratch images at repo root (the hero image lives in assets/)
+/*.png

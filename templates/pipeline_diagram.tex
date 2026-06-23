@@ -1,0 +1,56 @@
+% 추진체계도 (research framework / pipeline) — NRF 연구계획서용
+% 컴파일: bash scripts/compile_tikz.sh templates/pipeline_diagram.tex
+% 엔진: xelatex/lualatex (한글). 핵심: 크고 분명하게, 창신 모듈 강조, 직교 라우팅.
+\documentclass[border=8pt]{standalone}
+\usepackage{kotex}                 % 한글. 미설치 시 fontspec+Noto Sans CJK KR 로 대체
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}
+
+% --- 저채도 전문가 팔레트 ---
+\definecolor{cInput}{HTML}{ECEFF1}   % 입력/데이터 (옅은 회색)
+\definecolor{cStd}{HTML}{CFD8DC}     % 일반 모듈
+\definecolor{cNovel}{HTML}{FFE0B2}   % 창신 모듈 (강조)
+\definecolor{cNovelB}{HTML}{E65100}  % 창신 테두리
+\definecolor{cOut}{HTML}{C8E6C9}     % 출력/성과
+\definecolor{cEdge}{HTML}{455A64}    % 화살표
+
+\tikzset{
+  base/.style   = {rounded corners=4pt, draw=cEdge, line width=0.8pt,
+                   font=\sffamily\small, align=center, minimum height=1.0cm,
+                   inner sep=6pt, text width=2.7cm},
+  io/.style     = {base, fill=cInput},
+  std/.style    = {base, fill=cStd},
+  novel/.style  = {base, fill=cNovel, draw=cNovelB, line width=1.6pt}, % 강조(창신)
+  res/.style    = {base, fill=cOut},
+  arr/.style    = {-{Stealth[length=3mm]}, line width=1.0pt, color=cEdge,
+                   rounded corners=4pt},
+  lbl/.style    = {font=\sffamily\footnotesize, color=cEdge, fill=white, inner sep=2pt},
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=1.0cm and 1.1cm]
+  % --- 노드 (라벨을 사용자 세부목표로 교체) ---
+  \node[io]    (in)    {입력 데이터\\\footnotesize [데이터/시료]};
+  \node[std,   right=of in]    (m1) {세부목표 1\\\footnotesize [전처리/관찰]};
+  \node[novel, right=of m1]    (m2) {\textbf{세부목표 2}\\\footnotesize [핵심] 창신 기법};
+  \node[std,   right=of m2]    (m3) {세부목표 3\\\footnotesize [검증/확증]};
+  \node[res,   right=of m3]    (rs) {연구성과\\\footnotesize [논문/IP/응용]};
+
+  % --- 화살표 (직교 라우팅; 대각선 금지) ---
+  \draw[arr] (in) -- (m1);
+  \draw[arr] (m1) -- (m2) node[lbl,midway,above] {특징};
+  \draw[arr] (m2) -- (m3) node[lbl,midway,above] {예측};
+  \draw[arr] (m3) -- (rs);
+
+  % --- 피드백 루프 예시 (반복 검증) : 직교 + rounded corners ---
+  \draw[arr, dashed]
+     (m3.south) -- ++(0,-0.9cm) -| (m2.south)
+     node[lbl,pos=0.25,below] {반복 보정};
+
+  % --- 그룹 박스 (단계 묶기) ---
+  \begin{scope}[on background layer]
+    \node[draw=cEdge, dashed, rounded corners=6pt, inner sep=10pt,
+          fit=(m1)(m2)(m3), label={[font=\sffamily\footnotesize, cEdge]above:핵심 연구 단계}] {};
+  \end{scope}
+\end{tikzpicture}
+\end{document}
